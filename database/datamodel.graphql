@@ -1,0 +1,48 @@
+type Part {
+  id: ID! @unique
+  name: String!
+  manufacturer: Manufacturer @relation(name: "ManufacturerOnPart")
+  descriptor: String!  
+  order: Order @relation(name: "PartOnOrder")
+}
+
+type Manufacturer {
+  id: ID! @unique
+  name: String
+  parts: [Part!]! @relation(name: "ManufacturerOnPart")
+  orders: [Order!]! @relation(name: "ManufacturerOnOrder")
+  location: Location
+}
+
+type Cost {
+  currency: String
+  value: Float
+}
+
+type Order { 
+  id: ID! @unique
+  part: Part! @relation(name: "PartOnOrder")
+  supplier: Manufacturer @relation(name: "ManufacturerOnOrder")
+  deliveryDate: DateTime
+  cost: Cost
+  status: Status
+}
+
+enum Status {
+  OPEN
+  PURCHASED
+  ON_ROUTE  
+  CLOSE
+}
+
+type Location {
+  id: ID! @unique
+  name: String
+  coordinates: GeoCoordinate
+}
+
+
+type GeoCoordinate { 
+  lat: Float
+  long: Float
+}

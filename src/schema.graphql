@@ -1,0 +1,24 @@
+# import Cost from "./generated/prisma.graphql"
+
+input PartInput {
+  id: ID!
+}
+
+input ManufacturerInput {
+  id: ID!
+}
+
+type Query {
+  info: String
+  partLocation(part: PartInput!): Location
+  partCost(part: PartInput!): Cost
+  availableManufactureres(part: PartInput!): [Manufacturer]
+  bestManufacturer(
+    part: PartInput!
+    availableManufactureres: [ManufacturerInput]
+  ): Manufacturer
+}
+
+type Mutation {
+  info: String
+}
