@@ -1,24 +1,69 @@
-# import Cost from "./generated/prisma.graphql"
+scalar DateTime
 
-input PartInput {
-  id: ID!
+type Sandwich {
+  name: String
+  breadType: String
+  content: [String]
+  condiments: [String]
+  thickness: Float
 }
 
-input ManufacturerInput {
-  id: ID!
+input SandwichInput {
+  name: String
+  breadType: String
+  content: [String]
+  condiments: [String]
+  thickness: Float
+}
+
+input LocationInput {
+  lat: Float
+  long: Float
+}
+
+type Location {
+  lat: Float
+  long: Float
+}
+
+input CityInput {
+  name: String
+  location: LocationInput
+}
+
+type Info {
+  name: String
+  version: String
+}
+
+type City {
+  name: String
+  location: Location
+}
+
+type LaunchStrategy {
+  idealCity: City
+  idealLaunchDate: DateTime
+  requiredInventory: [Sandwich]
 }
 
 type Query {
-  info: String
-  partLocation(part: PartInput!): Location
-  partCost(part: PartInput!): Cost
-  availableManufactureres(part: PartInput!): [Manufacturer]
-  bestManufacturer(
-    part: PartInput!
-    availableManufactureres: [ManufacturerInput]
-  ): Manufacturer
+  info: Info
+  getTopCitiesByEvent(capital: Int): [City]
+  getTopCitiesByCost(capital: Int): [City]
+  idealCityFromCitiesByEventAndCost(
+    citiesByEvent: [CityInput]
+    citiesByCost: [CityInput]
+  ): City
+  generateLaunchStrategy(
+    idealCity: CityInput
+    idealLaunchDate: DateTime
+    requiredInventory: [SandwichInput]
+  ): LaunchStrategy
+  capitalToIdealLaunchDate(capital: Int): DateTime
+  capitalToRequiredInventory(capital: Int): [Sandwich]
 }
 
 type Mutation {
-  info: String
+  info: Info
 }
