@@ -2,6 +2,94 @@ const { GraphQLServer } = require('graphql-yoga')
 const { Prisma } = require('prisma-binding')
 const faker = require('faker')
 
+const fakeGeoCoordinate = () => ({
+  lat: faker.fake('{{address.latitude}}'),
+  long: faker.fake('{{address.longitude}}')
+})
+
+const fakeCity = () => ({
+  name: faker.random.arrayElement([
+    'Bellevue',
+    'London',
+    'Houston',
+    'Abu Dhabi',
+    'New York',
+    'Seattle',
+    'Boston',
+    'Los Angeles',
+    'San Fransico',
+    'Chicago',
+    'Paris',
+    'Amsterdam',
+    'Berlin',
+    'Moscow',
+    'New Delhi',
+    'Mumbai',
+    'Beijing'
+  ]),
+  location: fakeGeoCoordinate()
+})
+
+const fakeCondiments = quantity => {
+  return Object.keys([...Object.keys([...Array(quantity)])]).map(x => {
+    return faker.random.arrayElement([
+      'Mustard',
+      'Mayo',
+      'Ketchup',
+      'Lettuce',
+      'Tomato',
+      'Pickle',
+      'Onion'
+    ])
+  })
+}
+
+const fakeCities = quantity => {
+  return Object.keys([...Object.keys([...Array(quantity)])]).map(x => {
+    return fakeCity()
+  })
+}
+
+const fakeContent = quantity => {
+  return Object.keys([...Object.keys([...Array(quantity)])]).map(x => {
+    return faker.random.arrayElement([
+      'Roast Beef',
+      'Turkey',
+      'Cheese',
+      'Egg',
+      'Smoked Salmon'
+    ])
+  })
+}
+
+const fakeBreadType = () => {
+  return faker.random.arrayElement(['Sourdough', 'Bagel', 'Whole wheet'])
+}
+
+const fakeSandwichName = () => {
+  return (
+    faker.fake('{{commerce.productAdjective}}') +
+    ' ' +
+    faker.random.arrayElement(['Plain', 'Double Decker', 'Royal'])
+  )
+}
+
+const fakeSandwich = () => {
+  return {
+    name: fakeSandwichName(),
+    breadType: fakeBreadType(),
+    content: fakeContent(1),
+    condiments: fakeCondiments(3),
+    thickness: Math.random() * 10
+  }
+}
+
+const fakeSandwiches = quantity => {
+  return Object.keys([...Object.keys([...Array(quantity)])]).map(x => {
+    return fakeSandwich()
+  })
+}
+
 const resolvers = {
   Query: {
     info() {
@@ -11,30 +99,10 @@ const resolvers = {
       }
     },
     getTopCitiesByEvent(parent, { capital }, info, context) {
-      return [
-        {
-          name: 'Seattle'
-        },
-        {
-          name: 'London'
-        },
-        {
-          name: 'New York'
-        }
-      ]
+      return fakeCities(10)
     },
     getTopCitiesByCost(parent, { capital }, info, context) {
-      return [
-        {
-          name: 'Seattle'
-        },
-        {
-          name: 'Los Angeles'
-        },
-        {
-          name: 'San Fransico'
-        }
-      ]
+      return fakeCities(10)
     },
 
     idealCityFromCitiesByEventAndCost(
@@ -43,19 +111,13 @@ const resolvers = {
       info,
       context
     ) {
-      return {
-        name: 'Seattle'
-      }
+      return fakeCity()
     },
-    capitalToIdealLaunchDate(parent, { Capital }, info, context) {
-      return '01/10/2019'
+    capitalToIdealLaunchDate(parent, { capital }, info, context) {
+      return faker.fake('{{date.future}}')
     },
-    capitalToRequiredInventory(parent, { Capital }, info, context) {
-      return [
-        {
-          name: 'Pastrami'
-        }
-      ]
+    capitalToRequiredInventory(parent, { capital }, info, context) {
+      return fakeSandwiches(30)
     },
     generateLaunchStrategy(
       parent,

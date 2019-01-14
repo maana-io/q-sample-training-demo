@@ -31,14 +31,14 @@ input CityInput {
   location: LocationInput
 }
 
-type Info {
-  name: String
-  version: String
-}
-
 type City {
   name: String
   location: Location
+}
+
+type Info {
+  name: String
+  version: String
 }
 
 type LaunchStrategy {
